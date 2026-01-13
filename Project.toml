@@ -1,0 +1,20 @@
+name = "JCGEAgentInterface"
+uuid = "0ceb7b1e-19fc-43b9-b3d5-2f4cf3d18128"
+authors = ["Riccardo Boero <ribo@nilu.no>"]
+version = "0.0.0"
+
+[deps]
+JCGECore = "9fb9d605-0ed3-4980-82c1-f0874844db5d"
+JCGERuntime = "cc244198-1562-43f7-ad75-589e1d675269"
+JCGEOutput = "d375a7b0-530a-4732-94fc-3dc39a3a1ffd"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[sources]
+JCGECore = { path = "../JCGECore" }
+JCGERuntime = { path = "../JCGERuntime" }
+JCGEOutput = { path = "../JCGEOutput" }
+
+[compat]
+julia = "1.10"

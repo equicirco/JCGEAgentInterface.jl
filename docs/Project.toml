@@ -1,0 +1,6 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+JCGEAgentInterface = "0ceb7b1e-19fc-43b9-b3d5-2f4cf3d18128"
+
+[sources]
+JCGEAgentInterface = { path = ".." }
