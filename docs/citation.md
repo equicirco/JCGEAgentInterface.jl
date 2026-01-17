@@ -20,7 +20,7 @@ If you use this package, please cite:
 
 Boero, R. *JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.* [software], 2026.
 DOI: not yet assigned
-URL: https://JCGEAgentInterface.JCGE.org
+URL: https://AgentInterface.JCGE.org
 SourceCode: https://github.com/equicirco/JCGEAgentInterface.jl
 
 ```bibtex
@@ -29,7 +29,7 @@ SourceCode: https://github.com/equicirco/JCGEAgentInterface.jl
   author = {Boero, Riccardo},
   year   = {2026},
   doi    = {not yet assigned},
-  url    = {https://JCGEAgentInterface.JCGE.org}
+  url    = {https://AgentInterface.JCGE.org}
 }
 ```
 
