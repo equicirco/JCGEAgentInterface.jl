@@ -7,7 +7,7 @@
 </picture>
 ```
 
-`JCGEAgentInterface` is part of the JCGE ecosystem. This page provides the package
+`JCGEAgentInterface` is part of the [JCGE](https://jcge.org) ecosystem. This page provides the package
 overview and entry points; the API reference is on the next page.
 
 It exposes a minimal MCP-style request/response layer. Use `AgentContext` to

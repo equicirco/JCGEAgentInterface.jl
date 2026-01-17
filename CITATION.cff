@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE.jl tooling.
+title: JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.
 message: >-
   v0.1.0 - Initial public release.
 type: software
