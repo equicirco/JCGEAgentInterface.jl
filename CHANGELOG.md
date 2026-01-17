@@ -12,8 +12,9 @@ Security: For vulnerabilities.
 
 ## [0.1.0] - unreleased
 ### Added
-- Project layout and package boundaries.
-- Initial block-based modeling interfaces and RunSpec structure.
-- Calibration and output utilities with canonical data schema.
-- Example models and integration tests.
-- Documentation scaffolding and package docs.
+- MCP-style request/response schema with validation helpers.
+- Handler registry and request dispatch utilities.
+- AgentContext registry for model references, last spec, and last result.
+- Server entry point with stdio, HTTP, and WebSocket transports.
+- Built-in actions for listing models, loading models, solving, rendering equations, and exporting results.
+- Basic tests and documentation scaffolding for the agent interface.

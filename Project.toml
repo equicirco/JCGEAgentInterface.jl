@@ -1,7 +1,7 @@
 name = "JCGEAgentInterface"
 uuid = "0ceb7b1e-19fc-43b9-b3d5-2f4cf3d18128"
 authors = ["Riccardo Boero <ribo@nilu.no>"]
-version = "0.0.0"
+version = "0.1.0"
 
 [deps]
 JCGECore = "9fb9d605-0ed3-4980-82c1-f0874844db5d"
@@ -12,9 +12,13 @@ HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-JCGECore = { path = "../JCGECore" }
-JCGERuntime = { path = "../JCGERuntime" }
-JCGEOutput = { path = "../JCGEOutput" }
+JCGERuntime = { url = "https://github.com/equicirco/JCGERuntime.jl" }
+JCGEOutput = { url = "https://github.com/equicirco/JCGEOutput.jl" }
 
 [compat]
+HTTP = "1"
+JCGECore = "0.1"
+JCGEOutput = "0.1"
+JCGERuntime = "0.1"
+JSON3 = "1"
 julia = "1.10"
