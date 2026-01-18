@@ -12,7 +12,6 @@ HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-JCGERuntime = { url = "https://github.com/equicirco/JCGERuntime.jl" }
 JCGEOutput = { url = "https://github.com/equicirco/JCGEOutput.jl" }
 
 [compat]
