@@ -43,7 +43,7 @@ URL: https://JCGE.org
 If you use this package, please cite:
 
 Boero, R. *JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.* [software], 2026.
-DOI: not yet assigned
+DOI: 10.5281/zenodo.18335121
 URL: https://AgentInterface.JCGE.org
 SourceCode: https://github.com/equicirco/JCGEAgentInterface.jl
 
@@ -52,7 +52,7 @@ SourceCode: https://github.com/equicirco/JCGEAgentInterface.jl
   title  = {JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.},
   author = {Boero, Riccardo},
   year   = {2026},
-  doi    = {not yet assigned},
+  doi    = {10.5281/zenodo.18335121},
   url    = {https://AgentInterface.JCGE.org}
 }
 ```
