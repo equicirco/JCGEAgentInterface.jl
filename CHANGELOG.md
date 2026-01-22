@@ -10,7 +10,7 @@ Removed: For features removed in this release.
 Fixed: For any bug fixes.
 Security: For vulnerabilities.
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-01-22
 ### Added
 - MCP-style request/response schema with validation helpers.
 - Handler registry and request dispatch utilities.
