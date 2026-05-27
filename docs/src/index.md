@@ -14,3 +14,6 @@ It exposes both the original JCGE action protocol and a standard MCP stdio
 server. Agents can use it to discover JCGE package capabilities, inspect the
 available block catalog, guide model development, solve registered models,
 validate solved contexts, and render implemented equations through `JCGEOutput`.
+
+The [Agent Services](services.md) page summarizes the service categories and
+current limits.

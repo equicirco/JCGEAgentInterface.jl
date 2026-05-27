@@ -32,6 +32,11 @@ The agent surface is intentionally focused on:
 - rendering implemented equations, blocks, and symbols through `JCGEOutput`,
 - reporting or applying updates to released JCGE packages in the active Julia environment.
 
+The package services are grouped in the documentation as discovery, modeling
+guidance, model interaction, reporting, environment maintenance, and MCP runtime
+services. See `docs/src/services.md` for the full service contract and current
+limits.
+
 ## MCP server
 
 The standard MCP transport is:

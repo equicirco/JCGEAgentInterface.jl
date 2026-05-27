@@ -16,6 +16,7 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Usage" => "usage.md",
+        "Agent Services" => "services.md",
         "MCP Server" => "mcp.md",
         "Model Development" => "model-development.md",
         "API" => "api.md",
