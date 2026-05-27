@@ -1,0 +1,9 @@
+.git
+.github
+docs
+test
+Manifest.toml
+*.jl.cov
+*.jl.*.cov
+*.ji
+*.log

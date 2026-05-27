@@ -1,28 +1,29 @@
 """
-List packages available in the JCGE ecosystem.
+List registered models and JCGE package versions.
 """
 module ListPackages
 
 using ..Schema: ActionRequest, response
 using ..Context: model_names
+using ..Catalog: package_inventory
 
 export handler
 
 """
     handler(req; ctx=nothing)
 
-Return a list of known packages. Provide `ctx.packages` to override.
+Return registered model names and JCGE package versions.
 """
 function handler(req::ActionRequest; ctx=nothing)
-    packages = String[]
+    models = String[]
     if ctx !== nothing
         try
-            packages = model_names(ctx)
+            models = model_names(ctx)
         catch
-            packages = String[]
+            models = String[]
         end
     end
-    return response(req.id; data=Dict(:packages => packages))
+    return response(req.id; data=Dict(:models => models, :packages => package_inventory()))
 end
 
 end # module

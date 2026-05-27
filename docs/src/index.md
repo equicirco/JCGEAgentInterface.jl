@@ -8,7 +8,9 @@
 ```
 
 `JCGEAgentInterface` is part of the [JCGE](https://jcge.org) ecosystem. This page provides the package
-overview and entry points; the API reference is on the next page.
+overview and entry points; the API reference is on the API page.
 
-It exposes a minimal MCP-style request/response layer. Use `AgentContext` to
-register models and keep the last run result available for render/export actions.
+It exposes both the original JCGE action protocol and a standard MCP stdio
+server. Agents can use it to discover JCGE package capabilities, inspect the
+available block catalog, guide model development, solve registered models,
+validate solved contexts, and render implemented equations through `JCGEOutput`.

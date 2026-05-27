@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.equicirco/JCGEAgentInterface.jl",
+  "title": "JCGE Agent Interface",
+  "description": "MCP server for JCGE discovery, modeling guidance, solving, validation, and equation rendering.",
+  "repository": {
+    "url": "https://github.com/equicirco/JCGEAgentInterface.jl",
+    "source": "github"
+  },
+  "version": "0.0.0",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/equicirco/jcge-agentinterface-mcp:0.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

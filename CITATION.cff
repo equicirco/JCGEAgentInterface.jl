@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.
 message: >-
-  v0.1.0 - Initial public release.
+  v0.1.1 - MCP stdio server, JCGE discovery tools, and Docker/registry metadata.
 type: software
 doi: 10.5281/zenodo.18335121
 authors:
@@ -17,7 +17,7 @@ identifiers:
 repository-code: 'https://github.com/equicirco/JCGEAgentInterface.jl'
 url: 'https://AgentInterface.JCGE.org'
 abstract: >-
-  JCGEAgentInterface.jl exposes an MCP-style request/response layer for AI agents to load, solve, and inspect JCGE models.
+  JCGEAgentInterface.jl exposes MCP and action interfaces for AI agents to discover, load, solve, validate, and inspect JCGE models.
 keywords:
   - Computable General Equilibrium
   - CGE

@@ -34,21 +34,36 @@ end
 
 Construct an ActionRequest from a Dict parsed from JSON.
 """
-function request_from_dict(data::Dict{Symbol,Any})
+function request_from_dict(data::AbstractDict)
     id = string(get(data, :id, ""))
     action = Symbol(get(data, :action, ""))
     payload = Dict{Symbol,Any}()
     raw_payload = get(data, :payload, Dict{Any,Any}())
-    if raw_payload isa Dict
+    if raw_payload isa AbstractDict
         for (k, v) in raw_payload
-            payload[Symbol(k)] = v
+            payload[Symbol(k)] = _payload_value(v)
         end
     end
     return ActionRequest(id, action, payload)
 end
 
+function _payload_value(value)
+    if value isa AbstractDict
+        out = Dict{Symbol,Any}()
+        for (k, v) in value
+            out[Symbol(k)] = _payload_value(v)
+        end
+        return out
+    elseif value isa AbstractVector
+        return Any[_payload_value(v) for v in value]
+    else
+        return value
+    end
+end
+
 const REQUIRED_FIELDS = Dict{Symbol,Vector{Symbol}}(
     :load_model => [:name],
+    :describe_block => [:name],
 )
 
 """
@@ -86,8 +101,10 @@ end
 
 Convenience constructor for ActionRequest.
 """
-function request(id::AbstractString, action::Symbol; payload::Dict{Symbol,Any}=Dict{Symbol,Any}())
-    return ActionRequest(String(id), action, payload)
+function request(id::AbstractString, action::Symbol; payload::AbstractDict=Dict{Symbol,Any}())
+    parsed_payload = _payload_value(payload)
+    parsed_payload isa Dict{Symbol,Any} || error("payload must convert to Dict{Symbol,Any}")
+    return ActionRequest(String(id), action, parsed_payload)
 end
 
 """
@@ -95,8 +112,10 @@ end
 
 Convenience constructor for ActionResponse.
 """
-function response(id::AbstractString; ok::Bool=true, data::Dict{Symbol,Any}=Dict{Symbol,Any}(), error::Union{Nothing,String}=nothing)
-    return ActionResponse(String(id), ok, data, error)
+function response(id::AbstractString; ok::Bool=true, data::AbstractDict=Dict{Symbol,Any}(), error::Union{Nothing,String}=nothing)
+    parsed_data = _payload_value(data)
+    parsed_data isa Dict{Symbol,Any} || error("data must convert to Dict{Symbol,Any}")
+    return ActionResponse(String(id), ok, parsed_data, error)
 end
 
 end # module
