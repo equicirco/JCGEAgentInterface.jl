@@ -56,7 +56,7 @@ The repository contains:
 - `server.json`
 - `.github/workflows/publish-mcp.yml`
 
-The future release workflow builds and pushes:
+The release workflow builds and pushes:
 
 ```text
 ghcr.io/equicirco/jcge-agentinterface-mcp:<release-version>
