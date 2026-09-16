@@ -33,12 +33,24 @@ The MCP tools are:
 | `jcge_reporting_guide` | `:reporting_guide` | Guide generated equation, symbol, result, and reproducibility reporting. |
 | `jcge_package_status` | `:package_status` | Report installed and loaded JCGE package versions. |
 | `jcge_update_packages` | `:update_packages` | Dry-run or apply `Pkg.update` for released JCGE packages. |
-| `jcge_list_models` | `:list_packages` | List registered models and package versions. |
-| `jcge_load_model` | `:load_model` | Load a registered model by name. |
+| `jcge_list_models` | `:list_packages` | List registered models, capabilities, and compatibility. |
+| `jcge_load_model` | `:load_model` | Load a registered model and return its declared contract. |
+| `jcge_model_status` | `:model_status` | Read compatibility, lifecycle state, and safe next actions without running a model. |
+| `jcge_calibrate_model` | `:calibrate_model` | Run the selected model's declared calibration workflow. |
+| `jcge_check_calibration` | `:check_calibration` | Run the selected model's declared calibration diagnostic. |
+| `jcge_run_scenario` | `:run_scenario` | Run a selected model-owned named scenario. |
+| `jcge_run_experiment` | `:run_experiment` | Run a selected model-owned named experiment. |
 | `jcge_solve` | `:solve` | Solve a loaded or named `RunSpec`. |
 | `jcge_validate_model` | `:validate_model` | Validate the last solved context. |
+| `jcge_run_reporter` | `:run_reporter` | Run a named model-owned reporter on a study or solve result. |
+| `jcge_provenance` | `:provenance` | Return session-scoped study provenance records. |
 | `jcge_render_model` | `:render_model` | Render equations, blocks, or symbols. |
 | `jcge_export_results` | `:export_results` | Return tidy results from the last solve. |
+
+`jcge_calibrate_model`, `jcge_check_calibration`, `jcge_run_scenario`,
+`jcge_run_experiment`, and `jcge_run_reporter` invoke only callbacks explicitly
+registered by the model owner. MCP clients provide structured values and choose
+declared names; they cannot send Julia code or edit model equations.
 
 ## Package Updates
 

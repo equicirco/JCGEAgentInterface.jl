@@ -63,6 +63,10 @@ end
 
 const REQUIRED_FIELDS = Dict{Symbol,Vector{Symbol}}(
     :load_model => [:name],
+    :calibrate_model => [:inputs],
+    :run_scenario => [:name],
+    :run_experiment => [:name],
+    :run_reporter => [:name],
     :describe_block => [:name],
 )
 

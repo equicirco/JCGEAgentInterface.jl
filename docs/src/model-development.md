@@ -72,6 +72,26 @@ Use `jcge_calibration_guide` to inspect what `JCGECalibrate` supports today:
 Model-specific calibration logic should remain in the model package until it is
 general enough to move into `JCGECalibrate`.
 
+## Registered-Model Workflow
+
+For a model that has adopted the agent interface contract, use the operational
+workflow below. It keeps model code and economic choices with the model owner,
+while making declared operations available to an agent.
+
+1. Call `jcge_list_models`, then `jcge_load_model`.
+2. Call `jcge_model_status` to inspect compatibility and available operations.
+3. If the model declares calibration, call `jcge_calibrate_model` with its
+   required structured inputs, then `jcge_check_calibration` when available.
+4. Run a declared reference or policy study through `jcge_run_scenario` or
+   `jcge_run_experiment`.
+5. Solve a `RunSpec` through `jcge_solve` where the model workflow requires a
+   separate solve, then use `jcge_validate_model`.
+6. Request model-defined metrics through `jcge_run_reporter` and retrieve the
+   ordered study record with `jcge_provenance`.
+
+The agent must not infer calibration assumptions, scenario names, or indicators.
+Those are declared by the model adapter.
+
 ## Reporting Guidance
 
 Use `jcge_reporting_guide` to align scientific reporting with generated outputs.

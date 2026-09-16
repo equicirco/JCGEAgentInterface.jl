@@ -15,5 +15,10 @@ server. Agents can use it to discover JCGE package capabilities, inspect the
 available block catalog, guide model development, solve registered models,
 validate solved contexts, and render implemented equations through `JCGEOutput`.
 
+For an MCP server to calibrate or study a particular model, that model opts in
+through the explicit [model integration contract](model-integration.md). Models
+that do not opt in continue to support loading and solving through the legacy
+registration form.
+
 The [Agent Services](services.md) page summarizes the service categories and
 current limits.

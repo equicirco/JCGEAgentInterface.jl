@@ -287,7 +287,7 @@ version = "1.0.0"
 deps = ["HTTP", "JCGEBlocks", "JCGECalibrate", "JCGECore", "JCGEOutput", "JCGERuntime", "JSON3", "Pkg", "Test"]
 path = "."
 uuid = "0ceb7b1e-19fc-43b9-b3d5-2f4cf3d18128"
-version = "0.1.1"
+version = "0.2.0"
 
 [[deps.JCGEBlocks]]
 deps = ["JCGECore", "JCGERuntime", "JuMP", "MathOptInterface", "Test"]

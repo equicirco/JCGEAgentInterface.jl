@@ -5,6 +5,7 @@ module JCGEAgentInterface
 
 include("Schema.jl")
 include("Handlers.jl")
+include("Adapters.jl")
 include("Context.jl")
 include("Catalog.jl")
 include("Server.jl")
@@ -20,6 +21,12 @@ include("Actions/reporting_guide.jl")
 include("Actions/package_status.jl")
 include("Actions/update_packages.jl")
 include("Actions/load_model.jl")
+include("Actions/calibrate_model.jl")
+include("Actions/check_calibration.jl")
+include("Actions/run_workflow.jl")
+include("Actions/run_reporter.jl")
+include("Actions/provenance.jl")
+include("Actions/model_status.jl")
 include("Actions/solve.jl")
 include("Actions/render_model.jl")
 include("Actions/render_equations.jl")
@@ -29,8 +36,12 @@ include("Actions/export_results.jl")
 using .Schema: ActionRequest, ActionResponse, request, response
 using .Handlers: register_handler!, handle_request, default_handlers
 using .Server: serve, MCPServer, handle_mcp_message
-using .Context: AgentContext, register_model!, model_names
-using .Catalog: package_inventory, block_catalog, describe_block, capability_catalog, modeling_guide
+using .Adapters: CalibrationInput, WorkflowAdapter, ResultIndicator, ModelAdapter
+using .Adapters: WorkflowState, adapter_summary, build_model, calibration_input_status
+using .Adapters: calibration_diagnostics, workflow_parameter_status, run_workflow, run_reporter, transport_value, compatibility_status
+using .Context: AgentContext, register_model!, model_names, model_adapter, active_model_adapter
+using .Context: record_provenance!, provenance_records
+using .Catalog: package_inventory, package_version_map, block_catalog, describe_block, capability_catalog, modeling_guide
 using .Catalog: formulation_guide, solver_guide, calibration_guide, reporting_guide, mcp_tool_definitions
 using .ListPackages
 using .Capabilities
@@ -51,10 +62,14 @@ using .ValidateModel
 using .ExportResults
 
 export ActionRequest, ActionResponse, request, response
-export AgentContext, register_model!, model_names
+export CalibrationInput, WorkflowAdapter, ResultIndicator, ModelAdapter
+export WorkflowState, adapter_summary, build_model, calibration_input_status, calibration_diagnostics
+export workflow_parameter_status, run_workflow, run_reporter, transport_value, compatibility_status
+export AgentContext, register_model!, model_names, model_adapter, active_model_adapter
+export record_provenance!, provenance_records
 export register_handler!, handle_request, default_handlers
 export serve, MCPServer, handle_mcp_message
-export package_inventory, block_catalog, describe_block, capability_catalog, modeling_guide
+export package_inventory, package_version_map, block_catalog, describe_block, capability_catalog, modeling_guide
 export formulation_guide, solver_guide, calibration_guide, reporting_guide, mcp_tool_definitions
 
 """
@@ -73,6 +88,13 @@ function __init__()
     register_handler!(:package_status, PackageStatus.handler)
     register_handler!(:update_packages, UpdatePackages.handler)
     register_handler!(:load_model, LoadModel.handler)
+    register_handler!(:calibrate_model, CalibrateModel.handler)
+    register_handler!(:check_calibration, CheckCalibration.handler)
+    register_handler!(:run_scenario, RunWorkflow.scenario_handler)
+    register_handler!(:run_experiment, RunWorkflow.experiment_handler)
+    register_handler!(:run_reporter, RunReporter.handler)
+    register_handler!(:provenance, Provenance.handler)
+    register_handler!(:model_status, ModelStatus.handler)
     register_handler!(:solve, Solve.handler)
     register_handler!(:render_equations, RenderEquations.handler)
     register_handler!(:render_model, RenderModel.handler)

@@ -18,6 +18,7 @@ makedocs(
         "Usage" => "usage.md",
         "Agent Services" => "services.md",
         "MCP Server" => "mcp.md",
+        "Model Integration" => "model-integration.md",
         "Model Development" => "model-development.md",
         "API" => "api.md",
         "Citation" => "citation.md"

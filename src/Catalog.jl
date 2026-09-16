@@ -11,6 +11,7 @@ using JCGEOutput
 using JCGERuntime
 
 export JCGE_PACKAGE_NAMES, package_inventory, block_catalog, describe_block
+export package_version_map
 export capability_catalog, modeling_guide, formulation_guide, solver_guide
 export calibration_guide, reporting_guide, mcp_tool_definitions, MCP_TOOL_ACTIONS
 
@@ -98,6 +99,25 @@ function package_inventory()
         )
         for name in JCGE_PACKAGE_NAMES
     ]
+end
+
+"""
+    package_version_map()
+
+Return known loaded or installed JCGE package versions, preferring the version
+currently loaded by the server. This is a read-only snapshot for adapter
+compatibility checks.
+"""
+function package_version_map()
+    versions = Dict{String,Any}()
+    for package in package_inventory()
+        name = get(package, :name, nothing)
+        name isa AbstractString || continue
+        version = get(package, :loaded_version, nothing)
+        version === nothing && (version = get(package, :installed_version, nothing))
+        version === nothing || (versions[String(name)] = version)
+    end
+    return versions
 end
 
 _entry(group, helper, block_type, purpose; inputs=String[], notes="") = Dict(
@@ -550,6 +570,13 @@ const MCP_TOOL_ACTIONS = Dict(
     "jcge_update_packages" => :update_packages,
     "jcge_list_models" => :list_packages,
     "jcge_load_model" => :load_model,
+    "jcge_calibrate_model" => :calibrate_model,
+    "jcge_check_calibration" => :check_calibration,
+    "jcge_run_scenario" => :run_scenario,
+    "jcge_run_experiment" => :run_experiment,
+    "jcge_run_reporter" => :run_reporter,
+    "jcge_provenance" => :provenance,
+    "jcge_model_status" => :model_status,
     "jcge_solve" => :solve,
     "jcge_validate_model" => :validate_model,
     "jcge_render_model" => :render_model,
@@ -632,7 +659,7 @@ function mcp_tool_definitions()
         Dict(
             "name" => "jcge_list_models",
             "title" => "List Registered Models",
-            "description" => "List models registered in the current agent context and report JCGE package versions.",
+            "description" => "List registered models, their declared adapter capabilities, compatibility assessment, active selection, and JCGE package versions.",
             "inputSchema" => _tool_schema(Dict()),
         ),
         Dict(
@@ -642,6 +669,69 @@ function mcp_tool_definitions()
             "inputSchema" => _tool_schema(Dict(
                 "name" => Dict("type" => "string", "description" => "Registered model name."),
             ), ["name"]),
+        ),
+        Dict(
+            "name" => "jcge_calibrate_model",
+            "title" => "Calibrate Registered Model",
+            "description" => "Run a selected model's explicitly declared calibration workflow with structured inputs.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+                "inputs" => Dict("type" => "object", "description" => "Named calibration inputs required by the model adapter."),
+            ), ["inputs"]),
+        ),
+        Dict(
+            "name" => "jcge_check_calibration",
+            "title" => "Check Model Calibration",
+            "description" => "Run the selected model's declared calibration check against its latest calibration artifact.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+            )),
+        ),
+        Dict(
+            "name" => "jcge_run_scenario",
+            "title" => "Run Named Scenario",
+            "description" => "Run one model-owned named scenario with structured parameters and the current model/calibration state.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+                "name" => Dict("type" => "string", "description" => "Declared scenario name."),
+                "parameters" => Dict("type" => "object", "description" => "Optional scenario parameters declared by the model adapter."),
+            ), ["name"]),
+        ),
+        Dict(
+            "name" => "jcge_run_experiment",
+            "title" => "Run Named Experiment",
+            "description" => "Run one model-owned named experiment with structured parameters and the current model/calibration state.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+                "name" => Dict("type" => "string", "description" => "Declared experiment name."),
+                "parameters" => Dict("type" => "object", "description" => "Optional experiment parameters declared by the model adapter."),
+            ), ["name"]),
+        ),
+        Dict(
+            "name" => "jcge_run_reporter",
+            "title" => "Run Model Reporter",
+            "description" => "Run one model-owned named reporter against a result from the selected model.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+                "name" => Dict("type" => "string", "description" => "Declared reporter name."),
+                "source" => Dict("type" => "string", "enum" => ["workflow", "solve"], "description" => "Result source; defaults to the latest workflow when available."),
+            ), ["name"]),
+        ),
+        Dict(
+            "name" => "jcge_provenance",
+            "title" => "Get Study Provenance",
+            "description" => "Return structured, session-scoped provenance for model loading, calibration, studies, solves, validation, and reporting.",
+            "inputSchema" => _tool_schema(Dict(
+                "record_id" => Dict("type" => "string", "description" => "Optional provenance record ID returned by a prior call."),
+            )),
+        ),
+        Dict(
+            "name" => "jcge_model_status",
+            "title" => "Get Model Readiness Status",
+            "description" => "Read the selected model's compatibility, calibration, study, solve, validation, report, and safe next-action status without running the model.",
+            "inputSchema" => _tool_schema(Dict(
+                "model" => Dict("type" => "string", "description" => "Optional registered model name; defaults to the loaded model."),
+            )),
         ),
         Dict(
             "name" => "jcge_solve",

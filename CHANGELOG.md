@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 Releases use semantic versioning as in 'MAJOR.MINOR.PATCH'.
 
+## [0.2.0] - 2026-09-16
+### Added
+- A typed `ModelAdapter` contract for model metadata, compatibility, construction, calibration, named scenarios and experiments, indicators, and reporters.
+- MCP tools for model readiness, declared calibration and checks, named scenarios and experiments, model reporters, and session-scoped provenance.
+- Structured study provenance with model/package versions, supplied inputs or parameters, solver/check/report metadata, and ordered record IDs.
+- Compatibility, parameter, calibration-input, transport-safety, legacy-registration, and MCP lifecycle test coverage.
+
+### Changed
+- Registered-model discovery now reports declared capabilities, compatibility assessment, and the active model while retaining the legacy model-name field.
+- Model documentation now covers adapter integration, the lifecycle workflow, provenance retention, and the MCP tool surface.
+
 ## Change entries
 Added: For new features that have been added.
 Changed: For changes in existing functionality.

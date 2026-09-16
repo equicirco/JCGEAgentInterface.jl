@@ -1,6 +1,6 @@
 FROM docker.io/library/julia:1.10
 
-ARG VERSION=0.1.1
+ARG VERSION=0.2.0
 
 LABEL org.opencontainers.image.title="JCGE Agent Interface MCP Server"
 LABEL org.opencontainers.image.description="Model Context Protocol server for discovering, guiding, solving, validating, and rendering JCGE CGE models."

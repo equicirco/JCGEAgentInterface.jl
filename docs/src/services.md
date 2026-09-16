@@ -35,8 +35,12 @@ Model interaction services operate on models registered in an `AgentContext`.
 
 | Service | Actions and MCP tools | What it provides |
 | --- | --- | --- |
-| List models | `:list_packages`, `jcge_list_models` | Registered model names and package status. The action name is kept for backward compatibility. |
-| Load model | `:load_model`, `jcge_load_model` | Select a registered model by name and store it as the active model. |
+| List models | `:list_packages`, `jcge_list_models` | Registered model names, declared capabilities, compatibility, and package status. The action name is kept for backward compatibility. |
+| Load model | `:load_model`, `jcge_load_model` | Select a registered model by name and return its declared contract. |
+| Model status | `:model_status`, `jcge_model_status` | Read compatibility, lifecycle state, and safe next actions without invoking a callback. |
+| Calibrate model | `:calibrate_model`, `jcge_calibrate_model` | Run a model-owned calibration callback with declared structured inputs. |
+| Check calibration | `:check_calibration`, `jcge_check_calibration` | Run the model-owned diagnostic for the latest calibration artifact. |
+| Named studies | `:run_scenario`, `:run_experiment`, `jcge_run_scenario`, `jcge_run_experiment` | Run a declared scenario or experiment with structured parameters and current model state. |
 | Solve model | `:solve`, `jcge_solve` | Solve the active or named `RunSpec` with an optional optimizer. |
 | Validate model | `:validate_model`, `jcge_validate_model` | Run `JCGERuntime.validate_model` on the last solved context. |
 
@@ -49,6 +53,8 @@ Reporting services expose implemented model structure and solved results.
 | Render model | `:render_model`, `jcge_render_model` | Render equations, blocks, or symbols in markdown, LaTeX, or plain text. |
 | Render equations | `:render_equations` | Backward-compatible equation-rendering action. |
 | Export results | `:export_results`, `jcge_export_results` | Return tidy results collected from the last solved model. |
+| Model reporter | `:run_reporter`, `jcge_run_reporter` | Run one declared model reporter on the latest workflow or solved result. |
+| Provenance | `:provenance`, `jcge_provenance` | Return ordered, session-scoped records for model loading, calibration, studies, solves, validation, and reporting. |
 
 ## Environment Maintenance Services
 
@@ -90,6 +96,8 @@ Current limits:
 - It does not decide the correct economic theory, closure, formulation, or
   calibration assumptions for the user.
 - It solves only models that have been registered in the running `AgentContext`.
+- Model-specific calibration, studies, and reporters require a model-owned
+  adapter; legacy models still support loading and solving.
 - A plain Docker/MCP container starts with no user models registered.
 - In plain Docker/MCP mode, discovery and guidance tools work immediately, but
   solving requires a host Julia process or package extension that registers
@@ -97,6 +105,8 @@ Current limits:
 - `JCGECalibrate` provides currently available SAM and canonical-input helpers;
   model-specific calibration formulas should remain in the model package until
   they are general enough to move into `JCGECalibrate`.
+- Provenance is retained in memory for the current server session. It is not
+  written to disk; clients retrieve and persist it deliberately.
 
 These limits are deliberate. They keep the agent interface aligned with JCGE's
 model-as-code approach: models are explicit Julia packages or scripts, while the
