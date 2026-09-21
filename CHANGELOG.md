@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 Releases use semantic versioning as in 'MAJOR.MINOR.PATCH'.
 
+## [0.3.0] - 2026-09-21
+### Added
+- MCP tools for source-data guidance (`jcge_import_data_guide`) and discovery of installed reference examples (`jcge_list_examples`).
+- `JCGEImportData` and `JCGEExamples` as released MCP-server dependencies.
+- Catalog entries for multi-region trade and closure support, inventory conventions, and reusable auxiliary-quantity blocks.
+- Equation-rendering controls for block or equation grouping, expanded or family views, closure-condition roles, definitions, and LaTeX width.
+
+### Changed
+- Modeling, calibration, solver, and reporting guidance now covers source-neutral data preparation, calibrated start-residual diagnostics, equation report mappings, and physical satellite outputs.
+- Package, MCP, and service documentation now describes the expanded agent surface and its model-owned boundaries.
+
 ## [0.2.0] - 2026-09-16
 ### Added
 - A typed `ModelAdapter` contract for model metadata, compatibility, construction, calibration, named scenarios and experiments, indicators, and reporters.
