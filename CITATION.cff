@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: JCGEAgentInterface.jl - MCP-compatible agent interface for JCGE tooling.
 message: >-
-  v0.2.0 - model adapters, controlled calibration and studies, reporting, provenance, and MCP lifecycle diagnostics.
+  v0.3.0 - MCP catalog and API update with source-data guidance, example discovery, and expanded model-development, solver, and reporting support.
 type: software
 doi: 10.5281/zenodo.18335121
 authors:
