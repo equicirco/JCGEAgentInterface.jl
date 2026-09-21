@@ -162,6 +162,8 @@ using Test
     @test caps.ok
     @test haskey(caps.data, :packages)
     @test any(pkg -> pkg[:name] == "JCGECore", caps.data[:packages])
+    @test any(pkg -> pkg[:name] == "JCGEImportData", caps.data[:packages])
+    @test any(pkg -> pkg[:name] == "JCGEExamples", caps.data[:packages])
 
     blocks = handle_request(request("4", :list_blocks; payload=Dict(:group => "production")))
     @test blocks.ok
@@ -185,6 +187,11 @@ using Test
     @test solver.ok
     @test any(item -> item[:name] == "PATHSolver", solver.data[:optional_solver_status])
 
+    import_guide = handle_request(request("6b-import", :import_data_guide))
+    @test import_guide.ok
+    @test import_guide.data[:package] == "JCGEImportData"
+    @test any(source -> source[:source] == "Eurostat FIGARO", import_guide.data[:available_sources])
+
     calibration = handle_request(request("6c", :calibration_guide))
     @test calibration.ok
     @test haskey(calibration.data[:available_today], :canonical_files)
@@ -193,6 +200,11 @@ using Test
     reporting = handle_request(request("6d", :reporting_guide))
     @test reporting.ok
     @test any(contains("render_equations"), reporting.data[:jcge_output_available_today])
+
+    examples = handle_request(request("6e", :list_examples))
+    @test examples.ok
+    @test examples.data[:package] == "JCGEExamples"
+    @test any(example -> example[:name] == "GTAP7", examples.data[:examples])
 
     status = handle_request(request("7", :package_status))
     @test status.ok
@@ -219,7 +231,9 @@ using Test
     ))
     @test any(tool -> tool["name"] == "jcge_capabilities", tools[1]["result"]["tools"])
     @test any(tool -> tool["name"] == "jcge_formulation_guide", tools[1]["result"]["tools"])
+    @test any(tool -> tool["name"] == "jcge_import_data_guide", tools[1]["result"]["tools"])
     @test any(tool -> tool["name"] == "jcge_calibration_guide", tools[1]["result"]["tools"])
+    @test any(tool -> tool["name"] == "jcge_list_examples", tools[1]["result"]["tools"])
     @test any(tool -> tool["name"] == "jcge_calibrate_model", tools[1]["result"]["tools"])
     @test any(tool -> tool["name"] == "jcge_run_scenario", tools[1]["result"]["tools"])
     @test any(tool -> tool["name"] == "jcge_run_reporter", tools[1]["result"]["tools"])

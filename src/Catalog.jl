@@ -9,11 +9,14 @@ using JCGEBlocks
 using JCGECalibrate
 using JCGEOutput
 using JCGERuntime
+using JCGEImportData
+using JCGEExamples
 
 export JCGE_PACKAGE_NAMES, package_inventory, block_catalog, describe_block
 export package_version_map
 export capability_catalog, modeling_guide, formulation_guide, solver_guide
-export calibration_guide, reporting_guide, mcp_tool_definitions, MCP_TOOL_ACTIONS
+export calibration_guide, reporting_guide, import_data_guide, example_catalog
+export mcp_tool_definitions, MCP_TOOL_ACTIONS
 
 const JCGE_PACKAGE_NAMES = [
     "JCGECore",
@@ -21,6 +24,8 @@ const JCGE_PACKAGE_NAMES = [
     "JCGECalibrate",
     "JCGERuntime",
     "JCGEOutput",
+    "JCGEImportData",
+    "JCGEExamples",
 ]
 
 const PACKAGE_ROLES = Dict(
@@ -29,6 +34,8 @@ const PACKAGE_ROLES = Dict(
     "JCGECalibrate" => "SAM loading, labeled data containers, canonical input readers, starting values, and calibration parameter helpers.",
     "JCGERuntime" => "Model build, equation compilation, numerical solving, validation, residual checks, and grid experiments.",
     "JCGEOutput" => "Equation, block, and symbol rendering plus result collection and persistence.",
+    "JCGEImportData" => "Source-neutral IO, SUT, satellite, and national-account import helpers for preparing calibration inputs.",
+    "JCGEExamples" => "Reference CGE implementations that demonstrate JCGE model structure and scenarios.",
 )
 
 const PACKAGE_MODULES = Dict(
@@ -37,6 +44,8 @@ const PACKAGE_MODULES = Dict(
     "JCGECalibrate" => JCGECalibrate,
     "JCGERuntime" => JCGERuntime,
     "JCGEOutput" => JCGEOutput,
+    "JCGEImportData" => JCGEImportData,
+    "JCGEExamples" => JCGEExamples,
 )
 
 function _loaded_version(name::AbstractString)
@@ -186,6 +195,9 @@ const BLOCK_CATALOG = [
 
     _entry("trade_regions", "armington", "ArmingtonCESBlock", "CES composition of domestic and imported varieties.", inputs=["commodities", "regions", "params"]),
     _entry("trade_regions", "transformation", "TransformationCETBlock", "CET allocation between domestic sales and exports.", inputs=["commodities", "regions", "params"]),
+    _entry("trade_regions", "multiregion_trade", "MultiRegionTradeBlock", "Cross-region trade routes, common-market prices, and market clearing.", inputs=["regions", "commodities", "routes", "params"]),
+    _entry("trade_regions", "regional_external_account", "RegionalExternalAccountBlock", "Regional external-account closure for a multi-region model.", inputs=["regions", "commodities", "params"]),
+    _entry("trade_regions", "regional_investment_pool", "RegionalInvestmentPoolBlock", "Cross-region saving-investment transfer and closure equations.", inputs=["regions", "params"]),
     _entry("trade_regions", "foreign_trade", "ForeignTradeBlock", "Foreign-trade accounting relation.", inputs=["commodities", "params"]),
     _entry("trade_regions", "international_market", "InternationalMarketBlock", "World-market or cross-region market relation.", inputs=["commodities", "regions", "mapping"]),
     _entry("trade_regions", "external_balance", "ExternalBalanceBlock", "External-balance equation.", inputs=["commodities", "params"]),
@@ -205,6 +217,11 @@ const BLOCK_CATALOG = [
 
     _entry("closure_analysis", "closure", "ClosureBlock", "Macro closure choices and closure equations.", inputs=["params"]),
     _entry("closure_analysis", "initial_values", "InitialValuesBlock", "Initial value, bound, and fixed-value declarations.", inputs=["params"]),
+    _entry("closure_analysis", "inventory_treatment", "InventoryTreatment", "Coherent inventory convention shared by output allocation, market clearing, and saving-investment blocks.", inputs=["mode", "parameter"], notes="Use either stock_change or marketed_demand consistently across inventory-aware blocks."),
+    _entry("auxiliary_quantities", "quantity_link", "QuantityLinkBlock", "Links an auxiliary physical or non-monetary quantity to a model variable.", inputs=["quantities", "variables", "params"]),
+    _entry("auxiliary_quantities", "quantity_transformation", "QuantityTransformationBlock", "Transforms one auxiliary quantity into another with a model-defined coefficient.", inputs=["quantities", "params"]),
+    _entry("auxiliary_quantities", "quantity_balance", "QuantityBalanceBlock", "Balances auxiliary quantity supply and use without changing the monetary equilibrium structure.", inputs=["quantities", "params"]),
+    _entry("auxiliary_quantities", "quantity_capacity", "QuantityCapacityBlock", "Applies a capacity or availability relation to an auxiliary quantity.", inputs=["quantities", "params"]),
     _entry("closure_analysis", "gdp_income", "GDPIncomeBlock", "GDP income-side accounting.", inputs=["params"]),
     _entry("closure_analysis", "monopoly_rent", "MonopolyRentBlock", "Monopoly-rent accounting or wedge representation.", inputs=["commodities", "params"]),
 ]
@@ -240,6 +257,31 @@ function describe_block(name::AbstractString)
 end
 
 """
+    example_catalog()
+
+List the public reference-model modules shipped by `JCGEExamples`. The catalog
+is derived from the installed package, so it follows released examples without
+duplicating a second, manually maintained list in the agent interface.
+"""
+function example_catalog()
+    modules = String[]
+    for name in names(JCGEExamples; all=false, imported=false)
+        isdefined(JCGEExamples, name) || continue
+        getfield(JCGEExamples, name) isa Module || continue
+        push!(modules, string(name))
+    end
+    sort!(modules)
+    return Dict(
+        :package => "JCGEExamples",
+        :examples => [Dict(
+            :name => name,
+            :module => "JCGEExamples." * name,
+        ) for name in modules],
+        :use => "Examples are reference implementations. Inspect and adapt their model-owned calibration, closures, and scenarios rather than treating them as a universal template.",
+    )
+end
+
+"""
     capability_catalog()
 
 Return a stable capability description for agent tooling.
@@ -257,10 +299,12 @@ function capability_catalog()
             "JCGECore.RunSpec",
             "JCGECore.AbstractBlock",
             "JCGEBlocks helper constructors",
+            "JCGEImportData source-neutral IO, SUT, satellite, and national-account adapters",
             "JCGECalibrate canonical input and SAM calibration helpers",
             "JCGERuntime.run!",
             "JCGERuntime.Experiments.run_grid",
-            "JCGEOutput rendering and result exporters",
+            "JCGEOutput equation, satellite, and result exporters",
+            "JCGEExamples reference model modules",
         ],
         :formulation_interfaces => [
             "Equation AST with equality expressions through EEq",
@@ -282,8 +326,20 @@ function capability_catalog()
             "compile equation AST to JuMP constraints",
             "solve models with user-provided JuMP optimizers",
             "represent inequality constraints and complementarity metadata where blocks provide MCP variables",
-            "validate solved contexts",
+            "evaluate calibrated start residuals and solve with calibrated equation scaling",
+            "validate solved contexts, closure-condition roles, and residual diagnostics",
             "run serial, parallel, or distributed grid experiments through JCGERuntime.Experiments",
+        ],
+        :data_import_features => [
+            "source-neutral IO, SUT, satellite, and national-account data containers",
+            "adapters and cached downloads for BEA, Eurostat, Eurostat FIGARO, and OECD ICIO releases",
+            "Model-D symmetric IO transformation and balance checks",
+            "canonical-dataset hand-off to JCGECalibrate",
+        ],
+        :reporting_features => [
+            "equation-family rendering and model-owned report mappings",
+            "objective and closure-condition-role rendering",
+            "physical satellite anchors, projections, and balance reports",
         ],
         :agent_actions => sort(collect(values(MCP_TOOL_ACTIONS))),
         :update_policy => Dict(
@@ -305,13 +361,15 @@ function modeling_guide()
             "Keep data, calibration, model blocks, scenarios, and result analysis separate.",
             "Represent model equations through JCGE blocks and equation expressions, not as document-only equations.",
             "Treat calibration values and parameter-exploration values as data inputs.",
+            "Keep source import, model-specific mapping, SAM closure, and calibration choices explicit and separate.",
             "Use output rendering to document the implemented model specification.",
         ],
         :workflow => [
             Dict(:step => "define_scope", :description => "State regions, agents, goods, factors, policy instruments, and closures before coding."),
-            Dict(:step => "prepare_accounts", :description => "Use a SAM or equivalent account table to define calibrated flows and consistency checks."),
+            Dict(:step => "prepare_source_data", :description => "Select and cache source data, normalize IO/SUT or satellite tables, and retain source metadata and balance checks."),
+            Dict(:step => "prepare_accounts", :description => "Map source accounts into a model-owned SAM or equivalent account table, stating aggregation, institutional, trade, and closure assumptions."),
             Dict(:step => "calibrate_parameters", :description => "Load scale, share, elasticity, tax, wedge, and closure parameters from explicit calibration data."),
-            Dict(:step => "assemble_blocks", :description => "Select JCGEBlocks components matching production, demand, institutions, markets, trade, and closures."),
+            Dict(:step => "assemble_blocks", :description => "Select JCGEBlocks components matching production, demand, institutions, markets, trade, closures, inventories, and any auxiliary quantities."),
             Dict(:step => "validate_structure", :description => "Render blocks and equations, inspect symbols, and validate the built or solved context."),
             Dict(:step => "solve_reference", :description => "Solve the calibrated reference model before adding policy experiments."),
             Dict(:step => "run_scenarios", :description => "Change scenario inputs while preserving the model structure and comparability of policy instruments."),
@@ -321,8 +379,9 @@ function modeling_guide()
         :block_selection => Dict(
             :standard_cge => ["production", "factor_supply", "household_demand", "government", "investment", "market_clearing", "closure", "numeraire"],
             :open_economy => ["armington", "transformation", "foreign_trade", "external_balance", "exchange_rate_link"],
-            :multi_region => ["household_demand_regional", "government_regional", "international_market", "exchange_rate_link_region"],
-            :analysis_support => ["initial_values", "activity_analysis", "gdp_income", "render_model", "validate_model"],
+            :multi_region => ["regional_household_income_demand", "regional_government_demand", "multiregion_trade", "regional_external_account", "regional_investment_pool"],
+            :physical_or_satellite => ["quantity_link", "quantity_transformation", "quantity_balance", "quantity_capacity"],
+            :analysis_support => ["initial_values", "inventory_treatment", "activity_analysis", "gdp_income", "render_model", "validate_model"],
         ),
         :checks => [
             "Does every policy case have a comparable zero-policy reference?",
@@ -433,17 +492,55 @@ function solver_guide(; formulation=nothing)
         :jcge_runtime_support => [
             "solve action can load Ipopt or PATHSolver by name when installed in the active environment",
             "run! also accepts user-provided optimizer constructors in Julia code",
-            "validate_model reports residual and MCP metadata diagnostics after solving",
+            "evaluate_start_residuals! diagnoses the calibrated initial point before a policy or sensitivity run",
+            "run! applies calibrated equation scaling and records start and final residual summaries",
+            "validate_model reports residual, closure-condition-role, and MCP metadata diagnostics after solving",
             "JCGEOutput.collect_results records primals, reduced costs, duals, complementarity diagnostics, and metadata where available",
         ],
         :diagnostics => [
             "Check termination status before interpreting results.",
             "Inspect max residual and count above tolerance.",
+            "Inspect calibrated start residuals before attributing a failed scenario to economics rather than numerical initialization.",
+            "Use continuation or intermediate shocks only as an explicitly recorded numerical strategy, never as an unreported change in the modeled scenario.",
             "Inspect badly scaled variables and near-zero quantities.",
             "For MCP formulations, verify that every complementarity equation has the intended mcp_var.",
             "For policy experiments, compare against the appropriate zero-policy reference before ranking outcomes.",
         ],
         :formulation_requested => formulation,
+    )
+end
+
+"""
+    import_data_guide()
+
+Return source-neutral guidance on using `JCGEImportData` to prepare inputs for
+model-owned CGE calibration. This guide deliberately does not prescribe a
+source-to-SAM mapping or a closure.
+"""
+function import_data_guide()
+    return Dict(
+        :package => "JCGEImportData",
+        :available_sources => [
+            Dict(:source => "BEA", :coverage => "US make-use, input-output, national-account, and satellite releases."),
+            Dict(:source => "Eurostat", :coverage => "National supply-use, national-account, and satellite releases."),
+            Dict(:source => "Eurostat FIGARO", :coverage => "European multi-regional supply-use and input-output releases."),
+            Dict(:source => "OECD ICIO", :coverage => "Multi-country inter-country input-output releases."),
+        ],
+        :available_operations => [
+            "download and cache supported public releases with provenance and checksums",
+            "normalize source tables to source-neutral IO, SUT, IOT, and satellite containers",
+            "check SUT, IO, IOT, and SAM balance identities",
+            "transform supply-use tables to a symmetric industry-by-industry IO table with Model D",
+            "write a canonical dataset for JCGECalibrate after model-owned account mapping",
+        ],
+        :recommended_workflow => [
+            "Select the source, reference year, geography, and classification that fit the research question.",
+            "Cache the selected source release and retain its provenance before any aggregation or disaggregation.",
+            "Normalize and validate the source tables before applying a model-specific mapping.",
+            "Keep aggregation, disaggregation, balancing, institutional accounts, trade closure, and SAM construction in the model project, where their assumptions can be reviewed.",
+            "Hand the resulting canonical calibration tables to JCGECalibrate and document the transformation path.",
+        ],
+        :boundary => "JCGEImportData supports reproducible source access and table transformations. It does not infer a CGE account structure, a SAM closure, elasticities, or a model's economic theory.",
     )
 end
 
@@ -493,6 +590,7 @@ function calibration_guide()
         ),
         :recommended_workflow => [
             "Keep calibration input files separate from model equations and scenario definitions.",
+            "Use JCGEImportData where useful to normalize and validate source IO/SUT data; retain account mappings and SAM closure choices in the model project.",
             "Load sets, SAM accounts, labels, subsets, mappings, and parameter tables before assembling blocks.",
             "Compute reference starting values from the SAM and pass them into the model specification explicitly.",
             "Compute standard calibration parameters from the SAM where the available helper matches the model structure.",
@@ -523,10 +621,12 @@ function reporting_guide()
         :principles => [
             "Report the implemented model, not a manually reconstructed approximation.",
             "Use generated equation, block, and symbol listings to keep paper, supplement, and source code aligned.",
+            "Keep report-specific grouping, indices, and additive sums in model-owned JCGEOutput mappings rather than asking an agent to infer them.",
             "Use result exports with solver metadata and residual diagnostics for reproducibility.",
         ],
         :jcge_output_available_today => [
-            "render_equations(obj; format=:markdown|:latex|:plain)",
+            "render_equations(obj; format=:markdown|:latex|:plain, level=:block|:equation, view=:expanded|:family)",
+            "render_equation_report(obj; report_mappings=...) for model-owned compact equation presentation",
             "render_blocks(obj; format=:markdown|:latex|:plain)",
             "render_symbols(obj; format=:markdown|:latex|:plain)",
             "render_sections(sections; format=...)",
@@ -534,15 +634,19 @@ function reporting_guide()
             "tidy(results)",
             "to_json, to_csv, to_arrow, to_parquet",
             "to_dualsignals and DualSignals writers",
+            "satellite_reference, satellite_projection, satellite_calibration_report, and satellite_balances for model-owned physical or other auxiliary quantities",
         ],
         :recommended_outputs => [
             "Main text: describe model components and only the equations needed for the paper argument.",
             "Supplementary information: generated full equation listing and symbol table.",
             "Repository: source code, calibration inputs, scenario inputs, result-generation scripts, and solver metadata.",
+            "Physical or environmental results: explicit model-owned satellite anchors, units, projections, and balances.",
             "Diagnostics: residual summary, validation report, solver status, and package versions.",
         ],
         :checks => [
             "Can every reported equation be regenerated from the model source?",
+            "Are compact equation mappings declared by the model and validated against the equation AST?",
+            "Do physical or other satellite quantities retain an explicit unit, reference anchor, and reconciliation check?",
             "Does the symbol table explain indices, variables, parameters, and calibration quantities?",
             "Do result tables identify the model version, package versions, solver, and scenario inputs?",
             "Are model limitations described as modeling choices, not as implementation details?",
@@ -564,8 +668,10 @@ const MCP_TOOL_ACTIONS = Dict(
     "jcge_modeling_guide" => :modeling_guide,
     "jcge_formulation_guide" => :formulation_guide,
     "jcge_solver_guide" => :solver_guide,
+    "jcge_import_data_guide" => :import_data_guide,
     "jcge_calibration_guide" => :calibration_guide,
     "jcge_reporting_guide" => :reporting_guide,
+    "jcge_list_examples" => :list_examples,
     "jcge_package_status" => :package_status,
     "jcge_update_packages" => :update_packages,
     "jcge_list_models" => :list_packages,
@@ -630,9 +736,21 @@ function mcp_tool_definitions()
             )),
         ),
         Dict(
+            "name" => "jcge_import_data_guide",
+            "title" => "JCGE Import-Data Guide",
+            "description" => "Describe supported source-neutral IO, SUT, satellite, and national-account import functions and the boundary between source preparation and model-owned SAM construction.",
+            "inputSchema" => _tool_schema(Dict()),
+        ),
+        Dict(
             "name" => "jcge_calibration_guide",
             "title" => "JCGE Calibration Guide",
             "description" => "Describe currently available JCGECalibrate loaders, SAM helpers, calibration containers, and recommended calibration workflow.",
+            "inputSchema" => _tool_schema(Dict()),
+        ),
+        Dict(
+            "name" => "jcge_list_examples",
+            "title" => "List JCGE Examples",
+            "description" => "List reference model modules shipped by the installed JCGEExamples package.",
             "inputSchema" => _tool_schema(Dict()),
         ),
         Dict(
@@ -754,10 +872,15 @@ function mcp_tool_definitions()
         Dict(
             "name" => "jcge_render_model",
             "title" => "Render JCGE Model",
-            "description" => "Render equations, blocks, or symbols for the current JCGE model/result through JCGEOutput.",
+            "description" => "Render equations, blocks, or symbols for the current JCGE model/result through JCGEOutput. Equation views and grouping preserve the implemented model structure.",
             "inputSchema" => _tool_schema(Dict(
                 "kind" => Dict("type" => "string", "enum" => ["equations", "blocks", "symbols"], "description" => "What to render."),
                 "format" => Dict("type" => "string", "enum" => ["markdown", "latex", "plain"], "description" => "Rendering format."),
+                "level" => Dict("type" => "string", "enum" => ["block", "equation"], "description" => "Equation grouping level; used only when kind=equations."),
+                "view" => Dict("type" => "string", "enum" => ["expanded", "family"], "description" => "Expanded equations or exact equation families; used only when kind=equations."),
+                "show_defs" => Dict("type" => "boolean", "description" => "Include equation labels and block tags; used only when kind=equations."),
+                "show_condition_roles" => Dict("type" => "boolean", "description" => "Include closure-condition roles; used only when kind=equations."),
+                "latex_width" => Dict("type" => "integer", "minimum" => 20, "description" => "Approximate maximum rendered LaTeX line width; used only when kind=equations."),
             )),
         ),
         Dict(

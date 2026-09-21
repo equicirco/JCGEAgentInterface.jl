@@ -19,8 +19,10 @@ Useful discovery actions include:
 - `:modeling_guide`
 - `:formulation_guide`
 - `:solver_guide`
+- `:import_data_guide`
 - `:calibration_guide`
 - `:reporting_guide`
+- `:list_examples`
 - `:package_status`
 - `:update_packages`
 

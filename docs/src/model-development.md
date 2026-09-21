@@ -8,16 +8,17 @@ calibration, closure choices, and scenario design.
 
 1. Define the model scope: regions, commodities, activities, factors,
    institutions, policy instruments, and closure assumptions.
-2. Prepare calibration accounts, normally a SAM or equivalent account table.
-3. Load calibration values and parameter-exploration values from explicit data.
-4. Assemble the model from `JCGEBlocks` components.
-5. Choose the mathematical formulation: equality equilibrium, inequality-constrained equilibrium, MCP/complementarity, or optimization-style representation.
-6. Choose a solver route consistent with that formulation.
-7. Solve the calibrated reference model.
-8. Render blocks, symbols, and equations from the implemented model.
-9. Validate the solved context and inspect residuals.
-10. Run comparable scenarios or parameter experiments.
-11. Export results through `JCGEOutput`.
+2. Select, cache, normalize, and validate source tables where needed.
+3. Prepare calibration accounts, normally a SAM or equivalent account table.
+4. Load calibration values and parameter-exploration values from explicit data.
+5. Assemble the model from `JCGEBlocks` components.
+6. Choose the mathematical formulation: equality equilibrium, inequality-constrained equilibrium, MCP/complementarity, or optimization-style representation.
+7. Choose a solver route consistent with that formulation.
+8. Solve the calibrated reference model.
+9. Render blocks, symbols, and equations from the implemented model.
+10. Validate the solved context and inspect residuals.
+11. Run comparable scenarios or parameter experiments.
+12. Export results through `JCGEOutput`.
 
 ## Block Discovery
 
@@ -33,6 +34,18 @@ The catalog groups blocks by role:
 - government and investment,
 - trade and regions,
 - closure and analysis.
+- auxiliary quantities.
+
+## Source Data and Examples
+
+Use `jcge_import_data_guide` to discover the released `JCGEImportData`
+support for BEA, Eurostat, FIGARO, and OECD tables. It can retrieve, normalize,
+and validate source tables, but it deliberately does not determine a model's
+aggregation, account mapping, SAM closure, or behavioral assumptions.
+
+Use `jcge_list_examples` to discover installed `JCGEExamples` reference
+implementations. Their data conventions, closures, and scenarios remain
+example-specific and must be assessed before reuse.
 
 ## Comparability
 
@@ -97,4 +110,5 @@ Those are declared by the model adapter.
 Use `jcge_reporting_guide` to align scientific reporting with generated outputs.
 The intended flow is to describe the model conceptually in the paper, and to use
 `JCGEOutput` for generated equations, symbol tables, result tables, solver
-metadata, and reproducibility artifacts.
+metadata, physical satellite outputs, and reproducibility artifacts. Compact
+equation mappings and physical anchors remain model-owned declarations.

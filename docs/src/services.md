@@ -15,6 +15,7 @@ environment can do.
 | Package status | `:package_status`, `jcge_package_status` | Installed and loaded JCGE package versions in the active Julia environment. |
 | Block catalog | `:list_blocks`, `jcge_list_blocks` | Reusable `JCGEBlocks` helpers grouped by production, factors, households, markets, government, trade, and closure/analysis roles. |
 | Block description | `:describe_block`, `jcge_describe_block` | Purpose, helper name, block type, main inputs, and notes for one block entry. |
+| Example catalog | `:list_examples`, `jcge_list_examples` | Public reference-model modules available in the installed `JCGEExamples` package. |
 
 ## Modeling Guidance Services
 
@@ -26,6 +27,7 @@ They do not replace the theoretical modeling decision.
 | Model-development guide | `:modeling_guide`, `jcge_modeling_guide` | Recommended workflow from scope, SAM/calibration, blocks, formulation, solving, experiments, and output. |
 | Formulation guide | `:formulation_guide`, `jcge_formulation_guide` | Guidance on equality systems, inequality-constrained systems, MCP/complementarity, and optimization-style formulations. |
 | Solver guide | `:solver_guide`, `jcge_solver_guide` | Solver choice and diagnostics for `Ipopt`, `PATHSolver`, and user-provided JuMP optimizers. |
+| Import-data guide | `:import_data_guide`, `jcge_import_data_guide` | Source-neutral import support for BEA, Eurostat, FIGARO, and OECD data, and the boundary between table preparation and model-owned SAM construction. |
 | Calibration guide | `:calibration_guide`, `jcge_calibration_guide` | Current `JCGECalibrate` support for canonical CSV inputs, SAM loading, labeled containers, starting values, calibration parameters, and elasticity helpers. |
 | Reporting guide | `:reporting_guide`, `jcge_reporting_guide` | How to use `JCGEOutput` for generated equations, block listings, symbol tables, result exports, solver metadata, and reproducibility artifacts. |
 
@@ -50,7 +52,7 @@ Reporting services expose implemented model structure and solved results.
 
 | Service | Actions and MCP tools | What it provides |
 | --- | --- | --- |
-| Render model | `:render_model`, `jcge_render_model` | Render equations, blocks, or symbols in markdown, LaTeX, or plain text. |
+| Render model | `:render_model`, `jcge_render_model` | Render equations, blocks, or symbols in markdown, LaTeX, or plain text; equations can be grouped by block or family and can include closure roles. |
 | Render equations | `:render_equations` | Backward-compatible equation-rendering action. |
 | Export results | `:export_results`, `jcge_export_results` | Return tidy results collected from the last solved model. |
 | Model reporter | `:run_reporter`, `jcge_run_reporter` | Run one declared model reporter on the latest workflow or solved result. |
@@ -102,6 +104,9 @@ Current limits:
 - In plain Docker/MCP mode, discovery and guidance tools work immediately, but
   solving requires a host Julia process or package extension that registers
   models in the server context.
+- `JCGEImportData` provides source-neutral retrieval, normalization, and balance
+  checks. It does not choose a source-to-SAM mapping, aggregation,
+  institutional accounts, or closure.
 - `JCGECalibrate` provides currently available SAM and canonical-input helpers;
   model-specific calibration formulas should remain in the model package until
   they are general enough to move into `JCGECalibrate`.

@@ -26,9 +26,11 @@ The MCP tools are:
 | `jcge_capabilities` | `:capabilities` | Discover JCGE packages, interfaces, output formats, and runtime features. |
 | `jcge_list_blocks` | `:list_blocks` | List reusable block helpers grouped by CGE model component. |
 | `jcge_describe_block` | `:describe_block` | Describe one block helper or block type. |
+| `jcge_list_examples` | `:list_examples` | List public reference-model modules in the installed `JCGEExamples` package. |
 | `jcge_modeling_guide` | `:modeling_guide` | Return structured guidance for building CGE models with JCGE. |
 | `jcge_formulation_guide` | `:formulation_guide` | Guide equality, inequality, MCP/complementarity, and optimization-style formulations. |
 | `jcge_solver_guide` | `:solver_guide` | Guide solver choice and diagnostics for different formulations. |
+| `jcge_import_data_guide` | `:import_data_guide` | Guide source-neutral IO, SUT, satellite, and national-account import support. |
 | `jcge_calibration_guide` | `:calibration_guide` | Guide currently available JCGECalibrate inputs, SAM helpers, and calibration workflow. |
 | `jcge_reporting_guide` | `:reporting_guide` | Guide generated equation, symbol, result, and reproducibility reporting. |
 | `jcge_package_status` | `:package_status` | Report installed and loaded JCGE package versions. |
@@ -44,13 +46,18 @@ The MCP tools are:
 | `jcge_validate_model` | `:validate_model` | Validate the last solved context. |
 | `jcge_run_reporter` | `:run_reporter` | Run a named model-owned reporter on a study or solve result. |
 | `jcge_provenance` | `:provenance` | Return session-scoped study provenance records. |
-| `jcge_render_model` | `:render_model` | Render equations, blocks, or symbols. |
+| `jcge_render_model` | `:render_model` | Render equations, blocks, or symbols, with expanded or family equation views. |
 | `jcge_export_results` | `:export_results` | Return tidy results from the last solve. |
 
 `jcge_calibrate_model`, `jcge_check_calibration`, `jcge_run_scenario`,
 `jcge_run_experiment`, and `jcge_run_reporter` invoke only callbacks explicitly
 registered by the model owner. MCP clients provide structured values and choose
 declared names; they cannot send Julia code or edit model equations.
+
+`jcge_import_data_guide` only describes released source adapters and their
+normalization and validation support. A model project retains responsibility for
+account mappings, SAM construction, closure, and any data transformation that
+embodies an economic assumption.
 
 ## Package Updates
 

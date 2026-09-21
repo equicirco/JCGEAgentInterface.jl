@@ -11,9 +11,10 @@
 overview and entry points; the API reference is on the API page.
 
 It exposes both the original JCGE action protocol and a standard MCP stdio
-server. Agents can use it to discover JCGE package capabilities, inspect the
-available block catalog, guide model development, solve registered models,
-validate solved contexts, and render implemented equations through `JCGEOutput`.
+server. Agents can use it to discover released JCGE package capabilities,
+inspect the available block and example catalogs, guide source-data preparation
+and model development, solve registered models, validate solved contexts, and
+render implemented equations through `JCGEOutput`.
 
 For an MCP server to calibrate or study a particular model, that model opts in
 through the explicit [model integration contract](model-integration.md). Models

@@ -25,8 +25,10 @@ The agent surface is intentionally focused on:
 - listing and describing reusable `JCGEBlocks` components,
 - guiding users through CGE model development with JCGE blocks,
 - guiding formulation choices such as equality systems, inequalities, MCP/complementarity, and optimization-style representations,
+- guiding source-data preparation with released `JCGEImportData` adapters while retaining model-owned SAM construction choices,
 - guiding calibration with the currently available `JCGECalibrate` loaders, SAM helpers, labeled containers, and parameter workflows,
 - guiding solver choice and reporting from generated equations,
+- listing released `JCGEExamples` reference model modules,
 - solving registered `RunSpec` models,
 - validating solved contexts,
 - rendering implemented equations, blocks, and symbols through `JCGEOutput`,
@@ -71,8 +73,10 @@ The MCP tools use the `jcge_` prefix:
 - `jcge_modeling_guide`
 - `jcge_formulation_guide`
 - `jcge_solver_guide`
+- `jcge_import_data_guide`
 - `jcge_calibration_guide`
 - `jcge_reporting_guide`
+- `jcge_list_examples`
 - `jcge_package_status`
 - `jcge_update_packages`
 - `jcge_list_models`

@@ -16,8 +16,10 @@ include("Actions/describe_block.jl")
 include("Actions/modeling_guide.jl")
 include("Actions/formulation_guide.jl")
 include("Actions/solver_guide.jl")
+include("Actions/import_data_guide.jl")
 include("Actions/calibration_guide.jl")
 include("Actions/reporting_guide.jl")
+include("Actions/list_examples.jl")
 include("Actions/package_status.jl")
 include("Actions/update_packages.jl")
 include("Actions/load_model.jl")
@@ -42,7 +44,7 @@ using .Adapters: calibration_diagnostics, workflow_parameter_status, run_workflo
 using .Context: AgentContext, register_model!, model_names, model_adapter, active_model_adapter
 using .Context: record_provenance!, provenance_records
 using .Catalog: package_inventory, package_version_map, block_catalog, describe_block, capability_catalog, modeling_guide
-using .Catalog: formulation_guide, solver_guide, calibration_guide, reporting_guide, mcp_tool_definitions
+using .Catalog: formulation_guide, solver_guide, import_data_guide, calibration_guide, reporting_guide, example_catalog, mcp_tool_definitions
 using .ListPackages
 using .Capabilities
 using .ListBlocks
@@ -50,8 +52,10 @@ using .DescribeBlock
 using .ModelingGuide
 using .FormulationGuide
 using .SolverGuide
+using .ImportDataGuide
 using .CalibrationGuide
 using .ReportingGuide
+using .ListExamples
 using .PackageStatus
 using .UpdatePackages
 using .LoadModel
@@ -70,7 +74,7 @@ export record_provenance!, provenance_records
 export register_handler!, handle_request, default_handlers
 export serve, MCPServer, handle_mcp_message
 export package_inventory, package_version_map, block_catalog, describe_block, capability_catalog, modeling_guide
-export formulation_guide, solver_guide, calibration_guide, reporting_guide, mcp_tool_definitions
+export formulation_guide, solver_guide, import_data_guide, calibration_guide, reporting_guide, example_catalog, mcp_tool_definitions
 
 """
 Register the default action handlers.
@@ -83,8 +87,10 @@ function __init__()
     register_handler!(:modeling_guide, ModelingGuide.handler)
     register_handler!(:formulation_guide, FormulationGuide.handler)
     register_handler!(:solver_guide, SolverGuide.handler)
+    register_handler!(:import_data_guide, ImportDataGuide.handler)
     register_handler!(:calibration_guide, CalibrationGuide.handler)
     register_handler!(:reporting_guide, ReportingGuide.handler)
+    register_handler!(:list_examples, ListExamples.handler)
     register_handler!(:package_status, PackageStatus.handler)
     register_handler!(:update_packages, UpdatePackages.handler)
     register_handler!(:load_model, LoadModel.handler)
