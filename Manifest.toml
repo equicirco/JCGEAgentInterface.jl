@@ -315,7 +315,7 @@ version = "1.0.0"
 deps = ["HTTP", "JCGEBlocks", "JCGECalibrate", "JCGECore", "JCGEExamples", "JCGEImportData", "JCGEOutput", "JCGERuntime", "JSON3", "Pkg", "Test"]
 path = "."
 uuid = "0ceb7b1e-19fc-43b9-b3d5-2f4cf3d18128"
-version = "0.3.0"
+version = "0.3.1"
 
 [[deps.JCGEBlocks]]
 deps = ["JCGECore", "JCGERuntime", "JuMP", "MathOptInterface", "Test"]
@@ -337,9 +337,9 @@ version = "0.1.3"
 
 [[deps.JCGEExamples]]
 deps = ["CSV", "DataFrames", "Ipopt", "JCGEBlocks", "JCGECalibrate", "JCGECore", "JCGERuntime", "JuMP", "MPSGE", "MathOptInterface", "PATHSolver", "Pkg", "Statistics", "Test"]
-git-tree-sha1 = "6980aac6b352feec72680d07fa64c8b2b7cae128"
+git-tree-sha1 = "27a721a64d38f76fab80598a37a4775cbaaa753e"
 uuid = "0291785c-4d3c-45ec-ba8e-d8f5428f97c2"
-version = "0.2.0"
+version = "0.2.1"
 
 [[deps.JCGEImportData]]
 deps = ["CSV", "DataFrames", "Dates", "Downloads", "JCGECalibrate", "JCGECore", "JSON3", "SHA", "TOML", "Test", "ZipFile"]

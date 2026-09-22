@@ -205,6 +205,7 @@ using Test
     @test examples.ok
     @test examples.data[:package] == "JCGEExamples"
     @test any(example -> example[:name] == "GTAP7", examples.data[:examples])
+    @test any(example -> example[:name] == "GTAP7MCP", examples.data[:examples])
 
     status = handle_request(request("7", :package_status))
     @test status.ok

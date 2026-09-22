@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 Releases use semantic versioning as in 'MAJOR.MINOR.PATCH'.
 
+## [0.3.1] - 2026-09-22
+### Changed
+- Refresh the released `JCGEExamples` dependency to v0.2.1 so dynamic example discovery includes `GTAP7MCP`.
+
 ## [0.3.0] - 2026-09-21
 ### Added
 - MCP tools for source-data guidance (`jcge_import_data_guide`) and discovery of installed reference examples (`jcge_list_examples`).
